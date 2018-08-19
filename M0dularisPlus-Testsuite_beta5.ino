@@ -119,8 +119,8 @@ void loop() {
     if (millis() - last > 1000) {
 
       // send state every second to bus
-      Knx.write(1, state);
-      Debug.println(F("Sending %i on 15/7/254 from 1.1.1"), state);
+//      Knx.write(1, state);
+//      Debug.println(F("Sending %i on 15/7/254 from 1.1.1"), state);
 
       if (state) {
         digitalWrite(PROG_LED, HIGH);
