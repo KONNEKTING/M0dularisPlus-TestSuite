@@ -124,11 +124,11 @@ void setupFlash() {
 SerialFlashFile _currFile;
 CRC32 crc;
 
-void dataWritePrepare(DataWritePrepare dwp) {
+bool dataWritePrepare(DataWritePrepare dwp) {
     unsigned long size = dwp.size;
     char filename[10];
     
-    if (type == DATA_TYPE_ID_UPDATE) {
+    if (dwp.type == DATA_TYPE_ID_UPDATE) {
         sprintf(filename, "UPDATE.BIN");
     } else {
         sprintf(filename, "FI_%03d_%03d", dwp.type, dwp.id);
@@ -155,7 +155,7 @@ void dataWritePrepare(DataWritePrepare dwp) {
 
 bool dataWrite(DataWrite dw){
     Debug.println(F("dataWrite() coun=%d"), dw.count);
-    _curFlashFile.write(dw.data, dw.count);
+    _currFile.write(dw.data, dw.count);
     // update crc calculation
     for (int i = 0; i < dw.count; i++) {
         crc.update(dw.data[i]);
@@ -169,7 +169,7 @@ bool dataWriteFinish(unsigned long crc32) {
     Debug.println(F("dataWriteFinish() this=%d other=%d"), thisChecksum, crc32);
     if (thisChecksum == crc32) {
         Debug.println(F("dataWriteFinish() *done*"));
-        _currFlashFile.close();
+        _currFile.close();
         return true;
     } else {
         Debug.println(F("dataWriteFinish() *failed* erasing ..."));
