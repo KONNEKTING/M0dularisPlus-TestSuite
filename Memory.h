@@ -177,3 +177,35 @@ bool dataWriteFinish(unsigned long crc32) {
         return false;
     }
 }
+
+bool dataOpen(byte type, byte id) {
+    char filename[10];
+    
+    if (type == DATA_TYPE_ID_UPDATE) {
+        return false;
+    } else {
+        sprintf(filename, "FI_%03d_%03d", type, id);
+    }
+
+    Debug.println(F("dataOpen(): filename=%s"), filename);
+
+    if (SerialFlash.exists(filename)) {
+        _currFile = SerialFlash.open(filename);
+    } else {
+        return false;
+    }
+}
+
+bool dataRead(byte d[]) {
+    _currFile.read(d, sizeof(d));
+    return true;    
+}
+
+bool dataClose() {
+    if (_currFile!=NULL) {
+        _currFile.close();
+        return true;
+    } else {
+        return false;
+    }
+}
