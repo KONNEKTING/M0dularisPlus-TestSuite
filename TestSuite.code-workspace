@@ -17,6 +17,7 @@
 			"vector": "cpp",
 			"system_error": "cpp",
 			"deque": "cpp"
-		}
+		},
+		"arduino.logLevel": "verbose"
 	}
 }

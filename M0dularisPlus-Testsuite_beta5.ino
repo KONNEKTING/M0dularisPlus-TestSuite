@@ -32,16 +32,16 @@ byte KonnektingDevice::_paramSizeList[] = {
 const int KonnektingDevice::_numberOfParams =
     sizeof(_paramSizeList); // do not change this code
 
-/*
-void writeComObj(byte comObjId, word ga) {
-    byte gaHi = (ga >> 8) & 0xff;
-    byte gaLo = (ga >> 0) & 0xff;
-    byte settings = 0x80;
-    writeMemory(EEPROM_COMOBJECTTABLE_START + (comObjId * 3) + 0, gaHi);
-    writeMemory(EEPROM_COMOBJECTTABLE_START + (comObjId * 3) + 1, gaLo);
-    writeMemory(EEPROM_COMOBJECTTABLE_START + (comObjId * 3) + 2, settings);
-}
-*/
+
+// void writeComObj(byte comObjId, word ga) {
+//     byte gaHi = (ga >> 8) & 0xff;
+//     byte gaLo = (ga >> 0) & 0xff;
+//     byte settings = 0x80;
+//     writeMemory(EEPROM_COMOBJECTTABLE_START + (comObjId * 3) + 0, gaHi);
+//     writeMemory(EEPROM_COMOBJECTTABLE_START + (comObjId * 3) + 1, gaLo);
+//     writeMemory(EEPROM_COMOBJECTTABLE_START + (comObjId * 3) + 2, settings);
+// }
+
 
 /* *****************************************************************************
    S E T U P
@@ -53,7 +53,7 @@ void setup() {
   digitalWrite(PROG_LED, HIGH);
   long start = millis();
   while (!SerialUSB) {
-    // while (!SerialUSB && (millis() - start < 2000)) {
+  //while (!SerialUSB && (millis() - start < 2000)) {
     // wait for serial connection at most 2sec
   }
   digitalWrite(PROG_LED, LOW);
@@ -71,35 +71,40 @@ void setup() {
    */
   Debug.println(F("Setup Memory ..."));
   setupMemory();
+  setupFlash();
   Debug.println(F("--> DONE"));
 
   /*
    * Fake parametrization
    */
-  /*
-      Debug.println(F("Fake Memory Data..."));
-      word individualAddress = P_ADDR(1,1,1);
-      byte iaHi = (individualAddress >> 8) & 0xff;
-      byte iaLo = (individualAddress >> 0) & 0xff;
-      byte deviceFlags = 0xFE;
-      writeMemory(EEPROM_DEVICE_FLAGS, deviceFlags);
-      writeMemory(EEPROM_INDIVIDUALADDRESS_HI, iaHi);
-      writeMemory(EEPROM_INDIVIDUALADDRESS_LO, iaLo);
-
-      writeComObj(0, G_ADDR(15,7,253));
-      writeComObj(1, G_ADDR(15,7,254));
-      Debug.println(F("--> DONE"));
-  */
+  
+      // Debug.println(F("Fake Memory Data..."));
+      // word individualAddress = P_ADDR(1,1,1);
+      // byte iaHi = (individualAddress >> 8) & 0xff;
+      // byte iaLo = (individualAddress >> 0) & 0xff;
+      // byte deviceFlags = 0xFE;
+      // writeMemory(EEPROM_DEVICE_FLAGS, deviceFlags);
+      // writeMemory(EEPROM_INDIVIDUALADDRESS_HI, iaHi);
+      // writeMemory(EEPROM_INDIVIDUALADDRESS_LO, iaLo);
+      // // writeComObj(0, G_ADDR(15,7,253));
+      // // writeComObj(1, G_ADDR(15,7,254));
+      // Debug.println(F("--> DONE"));
+  
 
   Debug.println(F("Setup Memory Fctptr ..."));
-  Konnekting.setMemoryReadFunc(&readMemory);
-  Konnekting.setMemoryWriteFunc(&writeMemory);
-  Konnekting.setMemoryUpdateFunc(&updateMemory);
-  Konnekting.setMemoryCommitFunc(&commitMemory);
+    // ptr for memory access
+    Konnekting.setMemoryReadFunc(&readMemory);
+    Konnekting.setMemoryWriteFunc(&writeMemory);
+    Konnekting.setMemoryUpdateFunc(&updateMemory);
+    Konnekting.setMemoryCommitFunc(&commitMemory);
 
-  Konnekting.setDataWritePrepareFunc(&dataWritePrepare);
-  Konnekting.setDataWriteFunc(&dataWrite);
-  Konnekting.setDataWriteFinishFunc(&dataWriteFinish);
+    // ptr for writing/reading data to/from device
+    Konnekting.setDataOpenWriteFunc(&dataOpenWrite);
+    Konnekting.setDataOpenReadFunc(&dataOpenRead);
+    Konnekting.setDataWriteFunc(&dataWrite);
+    Konnekting.setDataReadFunc(&dataRead);
+    Konnekting.setDataCloseFunc(&dataClose);
+    
   Debug.println(F("--> DONE"));
 
   // M0dularis+ uses "Serial1" !!!
@@ -126,7 +131,7 @@ void loop() {
 
       // send state every second to bus
       Knx.write(1, (bool) state);
-      // Debug.println(F("Sending %i on 15/7/254 from 1.1.1"), state);
+      //Debug.println(F("Sending %i on 15/7/254 from 1.1.1"), state);
       //Debug.println(F("blink_0 %i "), state);
 
       if (state) {
@@ -157,7 +162,7 @@ void loop() {
       // Blink Prog-LED SLOW for testing purpose
       if (millis() - last > 1000) {
 
-        Debug.println(F("blink_2 %i "), state);
+        //Debug.println(F("blink_2 %i "), state);
 
         if (state) {
           digitalWrite(PROG_LED, HIGH);
