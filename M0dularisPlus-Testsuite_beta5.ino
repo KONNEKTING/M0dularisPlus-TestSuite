@@ -1,6 +1,8 @@
 /* *****************************************************************************
    Includes
  */
+#include <SerialFlash.h> // http://librarymanager/All#SerialFlash @ 0.5.0
+//#include <SerialFlash.h> // http://librarymanager/All#xxx @ 1.2.3
 #include "KonnektingDevice.h"
 #include "Memory.h"
 //#include <Arduino.h>
@@ -103,6 +105,7 @@ void setup() {
     Konnekting.setDataOpenReadFunc(&dataOpenRead);
     Konnekting.setDataWriteFunc(&dataWrite);
     Konnekting.setDataReadFunc(&dataRead);
+    Konnekting.setDataRemoveFunc(&dataRemove);
     Konnekting.setDataCloseFunc(&dataClose);
     
   Debug.println(F("--> DONE"));
